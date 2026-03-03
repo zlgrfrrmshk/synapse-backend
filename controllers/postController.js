@@ -9,6 +9,7 @@ export const createPost = async (req, res) => {
   try {
     const decoded = jwt.verify(req.cookies.access_token, process.env.JWT_SECRET)
     const { caption } = req.body
+    if (!caption && !req.file) return res.status(400).json('caption or photo required')
 
     let photo = null
     if (req.file) {
