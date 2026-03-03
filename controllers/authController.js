@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import admin from 'firebase-admin'
 import { con } from '../utils/db.js'
+import fs from 'fs'
+import ffmpeg from 'fluent-ffmpeg'
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -12,7 +14,7 @@ export const googleAuth = async (req, res) => {
     if (user.rowCount === 0) {
       user = await con.query(
         'INSERT INTO users (name, avatar, googleemail) VALUES ($1, $2, $3) RETURNING *',
-        [name, picture, email]
+        [name, '', email]
       )
     }
     const token = jwt.sign({ id: user.rows[0].id }, process.env.JWT_SECRET, { expiresIn: '21d' })
@@ -48,6 +50,34 @@ export const changeInfo = async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     await con.query('UPDATE users SET name = $1 WHERE id = $2', [req.body.name, decoded.id])
     res.status(200).json({ ok: true })
+  } catch (err) {
+    console.log(err)
+    res.status(500).json('server error')
+  }
+}
+
+export const changeAvatar = async (req, res) => {
+  try {
+    const decoded = jwt.verify(req.cookies.access_token, process.env.JWT_SECRET)
+    if (!req.file) return res.status(400).json('no file')
+
+    const filename = `${crypto.randomUUID()}.jpg`
+    const outputPath = `./storage/avatars/${filename}`
+
+    await new Promise((resolve, reject) => {
+      ffmpeg(req.file.path)
+        .outputOptions(['-vf scale=-2:512', '-q:v 2'])
+        .output(outputPath)
+        .on('end', () => {
+          fs.unlinkSync(req.file.path)
+          resolve()
+        })
+        .on('error', reject)
+        .run()
+    })
+
+    await con.query('UPDATE users SET avatar = $1 WHERE id = $2', [filename, decoded.id])
+    res.json({ ok: true })
   } catch (err) {
     console.log(err)
     res.status(500).json('server error')
