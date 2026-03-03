@@ -2,6 +2,7 @@ import dotenv from 'dotenv'
 import express from 'express';
 import authRoutes from './routes/authRoutes.js'
 import userRoutes from './routes/userRoutes.js'
+import postRoutes from './routes/postRoutes.js'
 import cookieParser from 'cookie-parser'
 import { con } from './utils/db.js'
 import admin from 'firebase-admin'
@@ -25,5 +26,6 @@ app.listen(port, () => {
 
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
+app.use('/api/post', postRoutes)
 
 con.connect().then(() => console.log(`server connected to postgres`));

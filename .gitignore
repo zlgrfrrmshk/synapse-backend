@@ -1,2 +1,4 @@
 .env
 utils/service.json
+node_modules
+storage
