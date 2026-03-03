@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import { con } from '../utils/db.js'
+import fs from 'fs'
+import ffmpeg from 'fluent-ffmpeg'
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -7,7 +9,27 @@ export const createPost = async (req, res) => {
   try {
     const decoded = jwt.verify(req.cookies.access_token, process.env.JWT_SECRET)
     const { caption } = req.body
-    const photo = req.file ? req.file.filename : null
+
+    let photo = null
+    if (req.file) {
+      const filename = `${crypto.randomUUID()}.jpg`
+      const outputPath = `./storage/posts_photos/${filename}`
+
+      await new Promise((resolve, reject) => {
+        ffmpeg(req.file.path)
+          .outputOptions(['-vf scale=-2:1280', '-q:v 2'])
+          .output(outputPath)
+          .on('end', () => {
+            fs.unlinkSync(req.file.path)
+            resolve()
+          })
+          .on('error', reject)
+          .run()
+      })
+
+      photo = filename
+    }
+
     const result = await con.query(
       'INSERT INTO posts (user_id, caption, photo) VALUES ($1, $2, $3) RETURNING *',
       [decoded.id, caption, photo]
