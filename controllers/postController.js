@@ -103,13 +103,13 @@ export const unlikePost = async (req, res) => {
 export const getPost = async (req, res) => {
   try {
     const result = await con.query(
-      `SELECT p.*, u.name, u.avatar, u.google_avatar,
+      `SELECT p.*, u.name, u.avatar,
         COUNT(l.user_id) AS likes
        FROM posts p
        JOIN users u ON u.id = p.user_id
        LEFT JOIN likes l ON l.post_id = p.id
        WHERE p.id = $1
-       GROUP BY p.id, u.name, u.avatar, u.google_avatar`,
+       GROUP BY p.id, u.name, u.avatar`,
       [req.params.postId]
     )
     if (result.rowCount === 0) return res.status(404).json('post not found')

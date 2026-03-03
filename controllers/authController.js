@@ -66,7 +66,7 @@ export const changeAvatar = async (req, res) => {
 
     await new Promise((resolve, reject) => {
       ffmpeg(req.file.path)
-        .outputOptions(['-vf scale=-2:512', '-q:v 2'])
+        .outputOptions(['-vf crop=min(iw\\,ih):min(iw\\,ih),scale=512:512', '-q:v 2'])
         .output(outputPath)
         .on('end', () => {
           fs.unlinkSync(req.file.path)
