@@ -7,8 +7,7 @@ import cookieParser from 'cookie-parser'
 import { con } from './utils/db.js'
 import admin from 'firebase-admin'
 import serviceAccount from './utils/service.json' with { type: 'json' }
-
-
+import path from 'path'
 
 dotenv.config()
 
@@ -27,5 +26,7 @@ app.listen(port, () => {
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/post', postRoutes)
+app.use('/storage/avatars', express.static(path.join(process.cwd(), 'storage/avatars')))
+app.use('/storage/photos', express.static(path.join(process.cwd(), 'storage/posts_photos')))
 
 con.connect().then(() => console.log(`server connected to postgres`));
