@@ -10,7 +10,6 @@ export const getUser = async (req, res) => {
   `SELECT u.id, u.name, u.avatar,
     COUNT(DISTINCT s.subscriber_id) AS subscribers,
     ARRAY(SELECT id FROM posts WHERE user_id = u.id ORDER BY created_at DESC) AS posts,
-    (SELECT COUNT(*) FROM posts WHERE user_id = u.id) AS posts_count,
     (SELECT COUNT(*) FROM likes l JOIN posts p ON p.id = l.post_id WHERE p.user_id = u.id) AS total_likes
   FROM users u
   LEFT JOIN subscriptions s ON s.target_id = u.id

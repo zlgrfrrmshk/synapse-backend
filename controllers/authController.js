@@ -84,6 +84,17 @@ export const changeAvatar = async (req, res) => {
   }
 }
 
+export const deleteAvatar = async (req, res) => {
+  try {
+    const decoded = jwt.verify(req.cookies.access_token, process.env.JWT_SECRET)
+    await con.query('UPDATE users SET avatar = $1 WHERE id = $2', ['', decoded.id])
+    res.json({ ok: true })
+  } catch (err) {
+    console.log(err)
+    res.status(500).json('server error')
+  }
+}
+
 export const subscribe = async (req, res) => {
   try {
     const token = req.cookies.access_token

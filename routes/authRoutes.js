@@ -1,5 +1,5 @@
 import express from "express";
-import { googleAuth, getMe, logout, changeInfo, subscribe, unsubscribe, isSubscribed, getSubscriptions, changeAvatar } from "../controllers/authController.js";
+import { googleAuth, getMe, logout, changeInfo, subscribe, unsubscribe, isSubscribed, getSubscriptions, changeAvatar, deleteAvatar } from "../controllers/authController.js";
 import multer from "../utils/multer.js";
 
 const router = express.Router();
@@ -18,6 +18,9 @@ router.post("/changeinfo", changeInfo);
 
 // * Change Profile Avatar
 router.post("/changeavatar", multer.single('avatar'), changeAvatar);
+
+// * Delete Profile Avatar
+router.post("/deleteavatar", deleteAvatar);
 
 // * Sub to another user
 router.post("/subscribe", subscribe);

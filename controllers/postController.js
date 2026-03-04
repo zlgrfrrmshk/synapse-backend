@@ -42,22 +42,6 @@ export const createPost = async (req, res) => {
   }
 }
 
-export const updatePost = async (req, res) => {
-  try {
-    const decoded = jwt.verify(req.cookies.access_token, process.env.JWT_SECRET)
-    const { caption } = req.body
-    const result = await con.query(
-      'UPDATE posts SET caption = $1 WHERE id = $2 AND user_id = $3 RETURNING *',
-      [caption, req.params.postId, decoded.id]
-    )
-    if (result.rowCount === 0) return res.status(404).json('post not found')
-    res.json(result.rows[0])
-  } catch (err) {
-    console.log(err)
-    res.status(500).json('server error')
-  }
-}
-
 export const deletePost = async (req, res) => {
   try {
     const decoded = jwt.verify(req.cookies.access_token, process.env.JWT_SECRET)
