@@ -35,7 +35,7 @@ app.use('/storage/photos', express.static(path.join(process.cwd(), 'storage/post
 
 app.use(express.static(path.join(process.cwd(), 'dist')))
 
-app.get('*', (req, res) => {
+app.get('/{*splat}', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'dist', 'index.html'))
 })
 
