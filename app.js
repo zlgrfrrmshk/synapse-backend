@@ -33,4 +33,10 @@ app.use('/api/feed', feedRoutes)
 app.use('/storage/avatars', express.static(path.join(process.cwd(), 'storage/avatars')))
 app.use('/storage/photos', express.static(path.join(process.cwd(), 'storage/posts_photos')))
 
+app.use(express.static(path.join(process.cwd(), 'dist')))
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'dist', 'index.html'))
+})
+
 con.connect().then(() => console.log(`server connected to postgres`));
