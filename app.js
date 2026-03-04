@@ -8,7 +8,9 @@ import feedRoutes from './routes/feedRoutes.js'
 import cookieParser from 'cookie-parser'
 import { con } from './utils/db.js'
 import admin from 'firebase-admin'
-import serviceAccount from './utils/service.json' with { type: 'json' }
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
+const serviceAccount = require('./utils/service.json')
 import path from 'path'
 
 dotenv.config()
