@@ -32,7 +32,9 @@ export const getMe = async (req, res) => {
     if (!token) return res.status(401).json(null)
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const user = await con.query('SELECT * FROM users WHERE id = $1', [decoded.id])
-    res.json(user.rows[0])
+    const result = user.rows[0]
+    if (process.env.CAN_POST == 'false') Object.assign(result, {can_post: false})
+    res.json(result)
   } catch (err) {
     console.log(err)
     res.status(500).json('server error')
